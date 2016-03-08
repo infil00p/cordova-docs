@@ -42,13 +42,26 @@ platform relies on a `SystemWebView` component.
 1. Copy the framework directory into your project's root directory and name it
 CordovaLib
 
-1. Add that project as a library project to your main project.
+1. Add CordovaLib in your settings.gradle file
+
+include ':app', ':CordovaLib'
+
+1. Add that project as a library project to your main project.  This can be done in your application's build.gradle file found in
+app/build.gradle:
+
+        dependencies {
+              compile fileTree(dir: 'libs', include: ['*.jar'])
+              compile 'com.android.support:appcompat-v7:21.0.3'
+              //Add Cordova below
+              debugCompile project(path: ":CordovaLib", configuration: "debug")
+              releaseCompile project(path: ":CordovaLib", configuration: "release")
+        }
 
 1. Add the following to the application's `/res/xml/main.xml` file,
    with the `layout_height`, `layout_width` and `id` modified to suit
    the application:
 
-        <org.apache.cordova.SystemWebView
+        <org.apache.cordova.engine.SystemWebView
             android:id="@+id/tutorialView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -63,11 +76,11 @@ CordovaLib
         ConfigXmlParser parser = new ConfigXmlParser();
         parser.parse(this);
 
-        SystemWebView webView = (SystemWebView) findViewById(R.id.WebViewComponent);
+        SystemWebView webView = (SystemWebView) findViewById(R.id.tutorialView);
         webInterface = new CordovaWebViewImpl(new SystemWebViewEngine(webView));
         webInterface.init(iface, parser.getPluginEntries(), parser.getPreferences());
 
-        loadUrl(parser.getLaunchUrl());
+        webView.loadUrl(parser.getLaunchUrl());
 
 
 1. Copy the application's HTML and JavaScript files to the Android
